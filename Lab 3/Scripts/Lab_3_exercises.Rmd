@@ -70,7 +70,9 @@ view(iris)
 
 # Can we preview this data?
 head(iris)
+#first 6 rows
 tail(iris)
+#last 6 rows
 ```
 
 \
@@ -117,12 +119,22 @@ A)  What are the exact measurements (Sepal.Length, Sepal.Width, Petal.Length, Pe
 
 ```{r}
 # YOUR CODE HERE
+first <- iris[1,]
+ 
+nrow(iris) 
+last <- iris[nrow(iris),]
 
 ```
 :::
 
 ```{r}
 # How can we construct new dataframes?
+new_df <- cbind(iris$Sepal.Length, iris$Sepal.Width)
+#column binding
+class(new_df)
+
+rbind()
+#row binding
 
 # What about basic data descriptions?
 summary(iris)
@@ -133,8 +145,16 @@ summary(iris)
 plot(iris)
 
 # How can we modify plot specifics?
+plot(iris, 
+     col="lightblue",
+     pch=23)
 
 # Plotting one variable?
+plot(iris[,1])
+
+plot(iris$Sepal.Length, iris$Sepal.Width)
+
+
 ```
 
 What about coloring by data frame categories?
@@ -152,6 +172,14 @@ B)  Which species has (on average) the longest and widest petals? Store it as a 
 
 ```{r}
 # YOUR CODE HERE
+plot(iris, col= iris$Species)
+
+#or
+plot(iris$Species, iris$Petal.Length)
+#subplot shows virginica
+
+plot(iris$Species, iris$Petal.Width)
+#subplot shows virginica
 
 ```
 :::
@@ -221,7 +249,10 @@ Let's make this better by changing the axis labels (which take the sliced column
 
 ```{r}
 # Histogram with colored bars and better labels
-hist(iris$Sepal.Length, col = "maroon", breaks = 30, xlab="Sepal Length (cm)", main = "Iris data")
+hist(iris$Sepal.Length, col = "maroon", breaks = 50, xlab="Sepal Length (cm)", main = "Iris data")
+
+#look at different color options 
+colors()
 ```
 
 **These code chunks can be hard to read.** Split the lines for readability.
@@ -229,11 +260,11 @@ hist(iris$Sepal.Length, col = "maroon", breaks = 30, xlab="Sepal Length (cm)", m
 ```{r}
 # Note how sepal lengths are extracted for the virginica species only, using the same format as above.
 hist(iris$Sepal.Length[iris$Species == "virginica"], 
-     col = "maroon", 
+     col = "maroon4", 
      breaks = 30, 
      xlab="Sepal Length (cm)", 
      main = "Iris virginica data",
-     xlim = c(4, 9))
+     xlim = c(4.5, 8))
 
 ```
 
@@ -259,6 +290,8 @@ We often inspect parts of our data for exploration and `base` R has several conv
 
 ```{r}
 # We will create a new object based on this subset
+#don't really need this section ;) but fun to have; think about using
+# R will read | as or 
 
 iris_subset <- subset(iris, 
                       Species == "setosa" | 
@@ -268,6 +301,7 @@ iris_subset <- subset(iris,
 ```{r}
 # plot it where the petal length is a function (tilde ~) of another column
 boxplot(iris_subset$Petal.Length ~ iris_subset$Species)
+#virginica will still show up because species is still a factor of 3
 ```
 
 Notice how *virgincia* still appears? That's because the original factor encoded in the `iris` data set is set to three levels (one per species), and that information is kept even while the information (rows) for *virgincia* has been subset.
@@ -298,24 +332,27 @@ plot(iris$Petal.Length,
 # Add group points by color
 points(iris$Petal.Length[iris$Species == 'versicolor'],
        iris$Sepal.Length[iris$Species == 'versicolor'],
-       col="forestgreen", pch= 16)
+       col="navy", pch= 16)
 
-# Add red points
+# Add skyblue points
 points(iris$Petal.Length[iris$Species == 'setosa'],
        iris$Sepal.Length[iris$Species == 'setosa'],
        col="skyblue", pch= 16)
 
-# Add blue points
+# Add violet points
 points(iris$Petal.Length[iris$Species == 'virginica'],
        iris$Sepal.Length[iris$Species == 'virginica'],
-       col="maroon", pch= 16)
+       col="violet", pch= 16)
 
 # Add legend
 legend(1,7.5, 
        legend=c('versicolor','setosa','virginica'), 
-       col=c("forestgreen","skyblue","maroon"), 
+       col=c("navy","skyblue","violet"), 
        pch=16,
        cex = 1)
+
+#learn about legend 
+?legend
 ```
 
 To grasp the flexibility that underpin the options of these initial plots, always check `?` functions.
@@ -361,7 +398,9 @@ There are also options for summary statistics, scales, colors, and annotations, 
 
 ```{r}
 ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length, color = Species))+
+  #make sure color is included in the aes if wanting to color by group
   geom_point()
+#can add fill function to fill all points in the geom_ function paraenthesis 
 
 # You can see the legend is automatically added, that is because we specified the color grouping by species in the aesthetic
 ```
@@ -396,6 +435,7 @@ ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length))+
   # x axis xustomization with labels specified by sequence
   scale_x_continuous(breaks = seq(0,8,1))+
   guides(color = guide_legend(override.aes = list(alpha = 1)))
+#line directly above is overriding the aesthetic given before, wouldn't reccommend
 ```
 
 ```{r}
@@ -405,6 +445,8 @@ ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Width, fill = Species))+
   labs(x = "Petal length (cm)", y = "Sepal length (cm)")+
   # x axis xustomization with labels specified by sequence
   scale_x_continuous(breaks = seq(0,8,1))
+
+#violin is good for showing frequency and amount of variation 
 ```
 
 ### Trend lines
@@ -431,6 +473,12 @@ C)  Create a new `iris` object (e.g., `iris_task4`) where the `Species` factor c
 ```{r}
 # YOUR CODE HERE
 
+#%>% #comand shift M 
+
+iris %>% 
+  mutate(Species = factor(Species, levels = rev(levels(iris$Species)))) %>% 
+  ggplot(aes(x=Species, y= Petal.Length, color= Species, size = 0.5))+ 
+  geom_violin()
 ```
 :::
 
@@ -473,6 +521,8 @@ ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length))+
   # x axis xustomization with labels specified by sequence
   scale_x_continuous(breaks = seq(0,8,1))+
   guides(color = guide_legend(override.aes = list(alpha = 1)))
+
+#installed.packages(hexbin)
 ```
 
 To this point, we have let `ggplot` choose our color schemes. Many alternatives exist and they're often better in how they represent the underlying data and can be customized.

@@ -210,13 +210,16 @@ print(summary_stats)
 
 ```{r}
 <<<<<<< HEAD
+
 p_no_data <- ggplot(datasets, aes(x = x, y = y)) +
 =======
+
 selected_datasets <- datasaurus_dozen %>%
   filter(dataset %in% c("dino", "circle", "x_shape", "star"))
 
 p_no_data <- ggplot(selected_datasets, aes(x = x, y = y)) +
 >>>>>>> 5d0dbbe60e740e1c6bd2bcf1b852088e0584f257
+
   geom_smooth(method = "lm", se = TRUE, color = "red") +
   facet_wrap(~dataset, ncol = 2) +
   theme_minimal()
@@ -386,6 +389,7 @@ mtcars2 %>%
   ggplot(aes(x=mpg, y=disp))
 
 <<<<<<< HEAD
+
 ?subset
 
 =======
@@ -670,6 +674,7 @@ knitr::include_graphics(path.expand("../Figures/Figure_4.png"))
 
 \
 Color is an extremely useful way to communicate information, as such it's important to avoid negligent pitfalls and mistakes. But it is one component of several that support an effective scientific visualization. Shapes can also be useful distinctions between groups, and the overall arrangement of your visualizations is what guides the human eye to scan for information and interpret the story.
+Another example from the **Economist**. In this case, the main title sets the stage to interpret the figures main components: The relative jump in housing prices was significant leading up to the COVID pandemic and was forecasted (in many places, underestimated!) to grow into this decade. The main color palettes are qualitative and the forecast uncertainties are shows in an easy-to-understand sequential palette. Our eyes naturally register country-level differences at the right side of the plot and the color codes are purposefully chosen to polor is an extremely useful way to communicate information, as such it's important to avoid negligent pitfalls and mistakes. But it is one component of several that support an effective scientific visualization. Shapes can also be useful distinctions between groups, and the overall arrangement of your visualizations is what guides the human eye to scan for information and interpret the story.
 
 ## EXERCISE
 

@@ -596,6 +596,7 @@ abundance_by_year <- fish_abundance %>%
     mean_cpue = mean(num_cpue, na.rm = TRUE),
     .groups = "drop"
   )
+abundance_by_year
 
 # Data frame 2: Average depth per species
 depth_by_species <- fish_abundance %>%
@@ -604,6 +605,10 @@ depth_by_species <- fish_abundance %>%
     mean_depth = mean(depth, na.rm = TRUE),
     .groups = "drop"
   )
+depth_by_species
+
+task4 <- left_join(abundance_by_year, depth_by_species, by= "accepted_name")
+task4
 
 ```
 

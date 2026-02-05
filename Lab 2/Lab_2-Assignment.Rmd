@@ -308,5 +308,5 @@ depth_species_cor <- cor(marine_survey$depth_m, marine_survey$species_count)
 
 In the space below, provide your interpretation of the correlation coefficient from Task 9f.
 
-There is a strong negative corrleation between depth and species count in the Marine Survey data. Meaning that accoridng to the data when depth increases species count decreases.  
+There is a strong negative corrleation between depth and species count in the Marine Survey data. Meaning that accoridng to the data when depth increases species count decreases.
 :::

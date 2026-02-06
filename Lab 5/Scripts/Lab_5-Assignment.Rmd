@@ -163,7 +163,7 @@ Rewrite Task 2 in the lecture exercises (summing total abundance for each specie
 
 ```{r}
 # Fish abundance data from lecture exercises
-fish_abundance <- read.csv("../Data/Groundfish_surveys.csv")
+fish_abundance <- read.csv("~/Desktop/BIOL3872/Lab 5/Data/Groundfish_surveys.csv")
 
 species <- unique(fish_abundance$accepted_name)
 year <- unique(fish_abundance$year)

@@ -8,7 +8,7 @@ output:
     df_print: paged
   css: styles.css
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -63,6 +63,7 @@ Let's plot the troops path, there and back again.
 troops_p <- ggplot(Minard.troops, aes(long, lat)) +
   geom_path(aes(size = survivors, color = direction,
                 group = group))
+troops_p
 #advance and retreat different colors and survivors dictates how thick the line is (size)
 
 ```
@@ -211,7 +212,7 @@ print(summary_stats)
 ```{r}
 #<<<<<<< HEAD
 
-p_no_data <- ggplot(datasets, aes(x = x, y = y)) +
+p_no_data <- ggplot(datasaurus_dozen, aes(x = x, y = y)) 
 #=======
 
 selected_datasets <- datasaurus_dozen %>%
@@ -229,7 +230,7 @@ p_no_data
 Now with the data overlaid
 
 ```{r}
-p_with_data <- ggplot(datasaurus_dozen, aes(x = x, y = y)) +
+p_with_data <- ggplot(dataset, aes(x = x, y = y)) +
   geom_point(alpha = 0.7, color = "steelblue") +
   geom_smooth(method = "lm", se = TRUE, color = "red") +
   facet_wrap(~dataset, ncol = 2) +
@@ -345,6 +346,10 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color= Species))+
   geom_point(size= 2)+
   theme_classic()
 
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(size = 2) +
+  theme_minimal()
 
 ```
 
@@ -606,6 +611,9 @@ co2_df %>%
   theme_minimal(10)+
   scale_color_manual(values = viridis(length(unique(co2_df$month))))+
   labs(x = "Year", y = expression("pC0"[2] ~ "(ppm)"))
+
+
+
 ```
 
 What if, instead, we colored continuous values (CO2) values instead of discrete months?

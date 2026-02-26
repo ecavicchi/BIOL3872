@@ -8,7 +8,7 @@ output:
     df_print: paged
   css: styles.css
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -170,7 +170,7 @@ for (i in example_2) {
 ```{r}
 for (i in 1:10) {
   for (j in letters[1:10]) {
-    print(paste0(i, "_", j))
+    print(paste(i, "_", j))
   }
 }
 ```
@@ -184,7 +184,7 @@ knitr::include_graphics(path.expand("../Figures/Scotian_shelf.png"))
 ```
 
 ```{r}
-fish_abundance <- read.csv("../Data/Groundfish_surveys.csv")
+fish_abundance <- read.csv("~/Desktop/BIOL3872/Lab 5/Data/Groundfish_surveys.csv")
 
 hist(fish_abundance$depth)
 #can add log to standardize 
@@ -642,7 +642,6 @@ abundance_detailed <- fish_abundance %>%
     n = n(),
     .groups = "drop"
   )
-
 
 
 ```

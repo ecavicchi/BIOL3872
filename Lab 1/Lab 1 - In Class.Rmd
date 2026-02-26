@@ -1,6 +1,8 @@
 ---
 title: "Lab 1 - In Class"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -95,4 +97,8 @@ hist(data,
      breaks = 10)
 
 par(mfrow = c(1, 1))
+
+library(ggplot)
+
+
 ```

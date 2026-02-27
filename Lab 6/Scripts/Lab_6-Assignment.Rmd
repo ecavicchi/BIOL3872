@@ -109,8 +109,7 @@ monthly_richness <- Bedford_ts%>%
   mutate(month_full = factor(month_full, levels = month.name)) %>% 
   ggplot(aes(x=month_full, y=median, color = Year))+
   geom_point()+
-  theme_minimal()+
-  scale_color_discrete()
+  theme_minimal()
 monthly_richness
 ```
 :::
@@ -165,11 +164,11 @@ dates <- c("1974-01-01", "1981-09-04", "1993-05-18", "2004-12-11", "2015-09-14",
 dates_format <- as.Date(dates, format = "%Y-%m-%d")
 
 # B)
-
+dfftime_v1 <- as.vector(diff(dates_format))
 
 
 # C)
-
+pre_Einstein <- dates_format[dates_format<datetime2]
 
 ```
 :::
@@ -186,11 +185,33 @@ B)  Create a `ggplot` object called `Richness_weekly` which plots raw richness (
 ```{r}
 # YOUR CODE HERE
 # A)
+Bedford_ts$Date <- as.Date(Bedford_ts$Date, format = "%Y-%m-%d")
 
+Bedford_ts$week <- format(Bedford_ts$Date, "%U")
 
+#forloop 
+unique_weeks <- sort(unique(Bedford_ts$week))
+weekly_median <- c()
+
+for (i in unique_weeks) {
+  
+  weekly_values <- Bedford_ts$Richness[Bedford_ts$week == i]
+  weekly_median[i] <- median(weekly_values)
+}
+weekly_median
 
 # B)
+weekly_median <- as.data.frame(weekly_median)
+weekly_median$week_number <- c(1:51)
 
+Richness_weekly <- Bedford_ts %>%
+  mutate(month_full = factor(month_full, levels = month.name)) %>%
+  ggplot(aes(x=week, y=Richness, color=month_full))+
+  geom_point()+
+  geom_point(data=weekly_median, 
+             aes(x=week_number, y=weekly_median), 
+             color="black")
+Richness_weekly
 
 
 ```

@@ -106,11 +106,16 @@ Bedford_ts$month_full<-month.name[Bedford_ts$Month]
 monthly_richness <- Bedford_ts%>% 
   group_by(month_full, Year) %>% 
   summarise(median=median(Richness)) %>% 
-  mutate(month_full = factor(month_full, levels = month.name)) %>% 
+  mutate(month_full = factor(month_full, levels = month.name))%>%
+  mutate(Year=factor(Year)) %>% 
   ggplot(aes(x=month_full, y=median, color = Year))+
   geom_point()+
-  theme_minimal()
+  scale_color_manual(values= c("lightskyblue", "steelblue4", "coral2", "indianred3"))+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x="Month", y="Median Richness")
 monthly_richness
+
 ```
 :::
 
@@ -157,7 +162,7 @@ B)  Calculate the difference between each date in sequence (date 1 to date 2, da
 C)  Index `dates_format` to remove all dates which are after the date when gravitational waves were first measured (see Q1). Store this as a vector called `pre_Einstein`.
 
 ```{r}
-dates <- c("1974-01-01", "1981-09-04", "1993-05-18", "2004-12-11", "2015-09-14", "2023-01-13")
+dates <- c("1974-01-01","1981-09-04","1993-05-18","2004-12-11","2015-09-14","2023-01-13")
 
 # YOUR CODE HERE
 # A)
@@ -186,6 +191,7 @@ B)  Create a `ggplot` object called `Richness_weekly` which plots raw richness (
 # YOUR CODE HERE
 # A)
 Bedford_ts$Date <- as.Date(Bedford_ts$Date, format = "%Y-%m-%d")
+class(Bedford_ts$Date)
 
 Bedford_ts$week <- format(Bedford_ts$Date, "%U")
 

@@ -110,6 +110,8 @@ Take e.g., this datetime `2025-02-01 15:35:20`:
 You can find these formats and their descriptions in R by running `?strptime()`
 
 ```{r}
+#month.abb for month abbreviations! 
+
 # These functions try to automatically find the correct unambiguous format, but we can specify if needed.
 as.Date("13-02-2012", format = "%d-%m-%Y")
 
@@ -117,7 +119,8 @@ as.Date("13-02-2012", format = "%d-%m-%Y")
 as.Date("13/02/2012", format = "%d-%m-%Y")
 
 # Can other formats be read unambiguously?
-
+as.Date("13-02/2012", format = "%d-%m/%Y")\
+#keep consistent and then it will be reported correct
 
 
 # This can cause problems if you have inconsistent date formats in your data
@@ -128,6 +131,8 @@ as.Date("13-02-2012")
 
 # Note that this function does not retain datetime information
 as.Date("2025-02-01 15:35:20")
+
+#reccommend the 24hr clock 
 
 ```
 
@@ -145,15 +150,15 @@ A)  Modify the enclosed character strings to a proper (unambiguous) date or date
 ```{r}
 # YOUR CODE HERE
 
-"February-26-2026"
+as.Date("February-26-2026", format = "%B-%d-%Y")
 
-"Jul/29/01"
+as.Date("Jul/29/01", format= "%b/%y/%d")
 
-"Dec-9-95"
+as.Date("Dec-9-95", format= "%b-%d-%y")
 
-"December/4/13 19:11:31"
+as.Date("December/4/13 19:11:31", format= "%B/%d/%y %H:%M:%S")
 
-"December-19-10 9:30:49pm"
+as.Date("December-19-10 9:30:49pm", format= "%B-%d-%y %I:%M:%S%p")
 
 ```
 
@@ -163,7 +168,9 @@ Let's check a few more formats and important features.
 # Example to display in AM/PM
 ex_datetime <- as.POSIXct("December-19-10 9:30:49pm", format = "%B-%d-%y %I:%M:%S%p")
 
+#modify the format of the time that is given (keeping 12hr clock) 
 format(ex_datetime, format = "%B-%d-%y %I:%M:%S%p")
+#OlsonNames() will be useful 
 
 ?timezones
 # Example to display timezones
@@ -212,6 +219,7 @@ flights_calendar <- flights_date_time %>%
     week_of_year = week(datetime),
     day_of_year = yday(datetime)) %>% 
   count(day_of_year, day_of_week, week_of_year)
+flights_calendar
 
 # Plotting flight counts
 flights_calendar %>% 
@@ -248,6 +256,22 @@ D)  Create an object called `Bedford_Date` by combining the `year`, `month`, and
 ```{r}
 # YOUR CODE HERE
 
+Bedford_ts$Date <- as.Date(Bedford_ts$Date)
+
+Bedford_ts$Year <- year(Bedford_ts$Date)
+Bedford_ts$Month <- month(Bedford_ts$Date)
+Bedford_ts$Day <- day(Bedford_ts$Date)
+
+
+#can use month.name for full name 
+Bedford_ts$Month_name <- month.abb[Bedford_ts$Month]
+
+Bedford_Date= as.Date(make_datetime(year=Bedford_ts$Year,
+                                    month=Bedford_ts$Month,
+                                    day= Bedford_ts$Day))
+
+#?identical is also a possibility
+all(Bedford_ts$Date==Bedford_Date)
 ```
 
 ### Visualizing dates and labels
@@ -260,6 +284,7 @@ r <- Bedford_ts %>%
   geom_point()+
   theme_minimal(12) +
   scale_x_date(date_minor_breaks = "2 month", date_labels = "%Y")
+r
 
 #Temperature
 t <- Bedford_ts %>% 
@@ -269,6 +294,7 @@ t <- Bedford_ts %>%
   theme_minimal(12) +
   scale_x_date(date_minor_breaks = "2 month", date_labels = "%Y")+
   scale_color_gradientn(colors = oce.colorsTemperature(20))
+t
 
 #Chl-A
 c <- Bedford_ts %>% 
@@ -278,6 +304,7 @@ c <- Bedford_ts %>%
   theme_minimal(12) +
   scale_x_date(date_minor_breaks = "2 month", date_labels = "%Y")+
   scale_color_gradientn(colors = oce.colorsChlorophyll(20))
+c
 
 r + t + c + plot_layout(ncol = 1)
 ```
@@ -298,6 +325,8 @@ feb1 = as.Date("2025-02-01")
 feb2 = as.Date("2025-02-02")
 diff = feb2-feb1
 diff
+
+#can subtract and greater than or less than 
 ```
 
 This can be useful for a few things. For example, remember how we told you in Lab 5 that loops are slow?
@@ -420,7 +449,7 @@ y <- Bedford_ts %>%
 
 z <- Bedford_ts %>% 
   filter(Date > as.Date("2015-12-31") & 
-           Date < as.Date("2016-12-31"))
+           Date <= as.Date("2016-12-31"))
 
 # Euclid's revenge!
 all(x == z, y == z)

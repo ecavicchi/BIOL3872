@@ -213,7 +213,6 @@ Richness_weekly <- Bedford_ts %>%
              color="black")
 Richness_weekly
 
-
 ```
 :::
 

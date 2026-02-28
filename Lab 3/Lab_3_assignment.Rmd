@@ -105,6 +105,7 @@ fixed_traits_plot <- ggplot(iris, aes(x=Petal.Length, y=Sepal.Length, colour = S
   geom_point(size=iris$Petal.Width)+
   theme_minimal()+
   labs(x="Petal Length", y="Sepal Length")
+fixed_traits_plot
 
 ```
 :::

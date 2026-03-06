@@ -89,7 +89,7 @@ C)  Summarize microbial richness (median) by each year and each month, then plot
 ```{r}
 library(tidyverse)
 
-Bedford_ts <- read.csv("../Data/BedfordBasin_ts.csv") %>%
+Bedford_ts <- read.csv("~/Desktop/BIOL3872/Lab 6/Data/BedfordBasin_ts.csv") %>%
   mutate(Year = year(Date),
          Month = month(Date))
 

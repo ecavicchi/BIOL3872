@@ -79,7 +79,6 @@ values(rast_gauss) <- exp(-((coords$x - x0)^4 + (coords$y - y0)^2) / (2 * sigma^
 rast_stack <- c(rast, rast_gauss)
 
 # B) 
-?names
 names(rast_stack) <- c("Random","Gaussian")
 
 # C)
@@ -207,21 +206,22 @@ rast_stack<- rast(load_layers(c("BO_bathymean", "BO_sstmean", "BO22_tempmax_bdma
 rast_stack
 
 # B)
-rast_stack_hake <- mask(crop(rast_stack, Ecoregions_hake), Ecoregions_hake)
+rast_stack_hake <- crop(rast_stack, Ecoregions_hake)
 rast_stack_hake
 
+
+
 # C)
-#par(mfrow = c(2,2))
+library(oce)
 
-#for (i in 1:nlyr(rast_stack_hake)) {
-  #r <- rast_stack_hake[[i]]
-  # remove values that break log()
-  #r[r <= 0] <- NA
-  #plot(log(r),
-      # col = hcl.colors(10, "YlGnBu"),
-     #  main = names(rast_stack_hake)[i])
-#}
+par(mfrow = c(2,2))
 
+for (i in 1:nlyr(rast_stack_hake)) {
+  r <- abs(rast_stack_hake[[i]])
+  plot(log(r),
+     col = oceColorsPalette(10, which=2),
+       main = names(rast_stack_hake)[i])
+}
 
 ```
 :::

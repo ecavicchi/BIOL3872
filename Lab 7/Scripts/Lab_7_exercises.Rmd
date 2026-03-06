@@ -27,7 +27,8 @@ After completing this lab, you will:
 ```{r}
 packages <- c("tidyverse", "sf", "terra", "rnaturalearth", "sdmpredictors", "oce")
 
-
+#terra for raster
+#oce for pretty colors 
 # Install packages not yet installed
 installed_packages <- packages %in% installed.packages()
 
@@ -142,12 +143,16 @@ Sometimes rasters are more precise than we need to quickly plot or analyze. We c
 
 ```{r}
 ?aggregate
+#make this more coarse and more efficent 
+plot(aggregate(bathy, fact= 100))
 ```
 
 We can convert a raster to a data frame and preserve positional information.
 
 ```{r}
 terra::as.data.frame(bathy, xy = TRUE, na.rm = FALSE)
+#keeping xy=TRUE keeps the lat and lon the same
+#long name comes from original; was what the elevation was stored as
 ```
 
 #### Stacking raster data
@@ -163,6 +168,7 @@ rast_stack
 
 # We can use this to modify layer names too.
 names(rast_stack)
+?names
 
 plot(rast_stack, 
      col = terrain.colors(10),
@@ -177,6 +183,7 @@ We can run operations on these raster stacks (pixel-by-pixel), calculating betwe
 ```{r}
 temp_diff <- rast_stack$WC_bio5-rast_stack$WC_bio6
 
+temp_diff
 #OR
 
 temp_diff <- rast_stack["WC_bio5"]-rast_stack["WC_bio6"]
@@ -194,10 +201,12 @@ While rasters and stacks of rasters are extremely useful, sometimes we just need
 
 ```{r}
 ?st_as_sf 
+#sf object is very similar to a dataframe
 
 # We can also do this for stacks, but takes longer
 rast_pts <- as.data.frame(bathy, xy = TRUE, na.rm = FALSE) %>% 
   st_as_sf(coords = c("x", "y"))
+print(rast_pts)
 ```
 
 ### Vectors
@@ -221,6 +230,8 @@ sf_use_s2(FALSE)
 # Load polygon data
 Ecoregions_shelf_seas <- read_sf("../Data/MEOW/", 
                                  layer = "meow_ecos")
+#just like reading data! 
+#layer is load everything with the name "meow_ecos" in it 
 
 class(Ecoregions_shelf_seas)
 
@@ -256,6 +267,16 @@ plot(Scotia,
      col = oce.colorsGebco(30)[1:20],
      breaks = seq(-5000, 0, 500))
 
+
+GulfofMaine <- Ecoregions_shelf_seas %>% 
+  filter(ECOREGION == "Gulf of Maine/Bay of Fundy")
+
+Maine <- crop(bathy, GulfofMaine)
+
+plot(Maine, 
+     col = oce.colorsGebco(30)[1:20],
+     breaks = seq(-5000, 0, 500))
+
 ```
 
 The polygon extents (xmin, xmax, ymin, ymax) are taken from `crop`. There is an extra `mask` step to exclude values outside the exact domain of the polygon (not just the bounding box extent). This sets all values outside of the polygon to NAs.
@@ -268,6 +289,9 @@ plot(Scotia,
      col = oce.colorsGebco(30)[1:20])
 
 # Instead of using these breaks to define the coastline, we can also index all values below zero
+
+Scotia[Scotia >= 0] <- NA
+plot(Scotia)
 ```
 
 We can treat `sf` data frames like any other, filtering rows, subsetting columns, summarizing values, or creating new columns. Let's load other vector data (coastlines) from `rnaturalearth` to combine with ecoregions and give some context.
@@ -283,6 +307,7 @@ Ecoregions_shelf_seas_NW <- Ecoregions_shelf_seas %>%
            )
 
 # Coastline data 
+install.packages("rnaturalearthdata")
 coastline <- ne_countries(scale = "Medium") 
 
 # Similar to `crop` in terra, but distinct from each other
@@ -338,6 +363,7 @@ ggplot(Ecoregions_shelf_seas_NW)+
   # The extra geom layer overlaying coastlines
   geom_sf(data = coastline_NW, fill = "grey80", linewidth = 0.1)+
   theme_minimal(10)
+#order matters when considering what you want the plot to look like 
 
 ```
 
@@ -398,12 +424,14 @@ Let's experiment with our raster data.
 
 ```{r}
 crs(bathy)
+#crs is the coordinate reference system 
 
 # Here is a useful projection for the NW Atlantic
 bathy_reproj <- project(bathy, "EPSG:2954")
   
 # Check the units!
 ext(bathy_reproj)
+#because they have different units 
 
 # Can two rasters with different CRS be stacked?
 c(bathy_reproj, bathy)
@@ -434,6 +462,10 @@ B)  Plot these using `ggplot` in an elegant way, filling or coloring attributes 
 
 ```{r}
 # YOUR CODE HERE
+Ecoregions_NW_reproj <- Ecoregions_shelf_seas_NW %>% 
+  st_transform("EPSG:2954")
+
+
 ```
 
 We will cover different grid geometries, spatial operations (distance, area, etc.), and spatial interpolation next week!

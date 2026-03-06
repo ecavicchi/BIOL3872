@@ -206,7 +206,7 @@ rast_stack<- rast(load_layers(c("BO_bathymean", "BO_sstmean", "BO22_tempmax_bdma
 rast_stack
 
 # B)
-rast_stack_hake <- crop(rast_stack, Ecoregions_hake)
+rast_stack_hake <- mask(crop(rast_stack, Ecoregions_hake), Ecoregions_hake)
 rast_stack_hake
 
 
@@ -222,6 +222,7 @@ for (i in 1:nlyr(rast_stack_hake)) {
      col = oceColorsPalette(10, which=2),
        main = names(rast_stack_hake)[i])
 }
+
 
 ```
 :::

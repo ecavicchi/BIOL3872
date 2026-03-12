@@ -210,7 +210,6 @@ rast_stack_hake <- mask(crop(rast_stack, Ecoregions_hake), Ecoregions_hake)
 rast_stack_hake
 
 
-
 # C)
 library(oce)
 

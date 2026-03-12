@@ -37,6 +37,13 @@ if (any(installed_packages == FALSE)) {
 # Packages loading
 
 invisible(lapply(packages, library, character.only = TRUE))
+
+install.packages("tidyterra")
+library("tidyterra")
+
+installed_packages
+
+update.packages("dplyr")
 ```
 
 ### Spatial data revisited
@@ -52,7 +59,7 @@ We can perform spatial operations using the `sf` package on vector data (lines, 
 coastline <- ne_countries(scale = "Medium", returnclass = "sf")
 
 # Trawl survey data
-trawls <- read.csv("../../Lab7/Data/Groundfish_surveys.csv") %>% 
+trawls <- read_csv("~/Desktop/BIOL3872/Lab 7/Data/Groundfish_surveys.csv") %>% 
   st_as_sf(coords = c("longitude", "latitude"),
            crs = st_crs("EPSG:4326"))
 

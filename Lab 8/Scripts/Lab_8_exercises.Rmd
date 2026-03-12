@@ -38,12 +38,8 @@ if (any(installed_packages == FALSE)) {
 
 invisible(lapply(packages, library, character.only = TRUE))
 
-install.packages("tidyterra")
-library("tidyterra")
-
 installed_packages
 
-update.packages("dplyr")
 ```
 
 ### Spatial data revisited
@@ -55,6 +51,8 @@ Last week we introduced spatial information (rasters and vector data) types, how
 We can perform spatial operations using the `sf` package on vector data (lines, points, polygons). Let's look at some examples.
 
 ```{r}
+install.packages("rnaturalearthdata")
+
 # Coastline from Natural Earth
 coastline <- ne_countries(scale = "Medium", returnclass = "sf")
 
@@ -62,6 +60,7 @@ coastline <- ne_countries(scale = "Medium", returnclass = "sf")
 trawls <- read_csv("~/Desktop/BIOL3872/Lab 7/Data/Groundfish_surveys.csv") %>% 
   st_as_sf(coords = c("longitude", "latitude"),
            crs = st_crs("EPSG:4326"))
+
 
 
 # Crop coastline to trawl extent
@@ -161,7 +160,7 @@ sst <- rast(load_layers("BO_sstmean"))
 names(sst) <- "SST"
 
 # Trawl data 
-trawls <- read.csv("../../Lab7/Data/Groundfish_surveys.csv") %>% 
+trawls <- read.csv("~/Desktop/BIOL3872/Lab 7/Data/Groundfish_surveys.csv") %>% 
   st_as_sf(# Notice that this (data) arguement is empty, it is piped in above
            
     # this defines the coordiates to create geometry column
@@ -279,6 +278,9 @@ grid <- st_make_grid(trawls,
 
 # Build sf using grid and making a new column keeping track of grid IDs (each row is a unique cell)
 grid <- st_sf(geometry = grid, grid_id = seq_along(grid))
+#st_sf makes new column in an sf
+#st_as_sf converts to an sf
+#seq_along will do a list of numbers along that assigning them a number 
 
 ggplot() +
   geom_sf(data = grid)+
@@ -308,7 +310,7 @@ summary_grid <- trawls_grid %>%
   # for each grid id
   group_by(grid_id) %>%
   summarise(
-    # count total number of observations
+    # count total number of observations; shown as n()
     n_points = n(),
     # calculate median abundance
     med_abund = median(num_cpue, na.rm = TRUE)
@@ -320,6 +322,8 @@ str(summary_grid)
 grid_summary <- grid %>%
   # keeps all summary data, matches to original grid and keeps the geometry column (grid   # coordinate information) 
   left_join(summary_grid, by = "grid_id")
+
+grid_summary
 ```
 
 Let's visualize the median abundance of all fish across grid cells containing point observations.
@@ -339,10 +343,17 @@ B)  Map this similar to our approach above, apply a nice color palette, and edit
 ```{r}
 
 # A)
+grid_summary <- grid_summary %>% 
+  drop_na()
 
+grid_summary <- grid_summary[!is.na(grid_summary$med_abund),]
 
 # B)
-
+ggplot()+
+  geom_sf(data=grid_summary, aes(fill= med_abund))+
+  geom_sf(data=coastline, fill ="grey")+
+  theme_minimal(12)+
+  scale_fill_gradient(low= "white", high = "purple")
 
 ```
 
@@ -359,6 +370,9 @@ knitr::include_graphics(path.expand("../Figures/Hex_grids.png"))
 Let's map hexagonal spatial grids of the average abundance for each the top 5 most abundant species on average in `trawls`.
 
 ```{r}
+
+#this is not on midterm or the final!!! thanks liam for the shoutout
+
 # Which species have the highest mean abundance in the data set?
 which_top5 <- trawls %>%
   # We don't need the coordinate information
@@ -371,6 +385,8 @@ which_top5 <- trawls %>%
   summarize(mean_abund = mean(num_cpue)) %>%
   # Index all these calculations for the top 5
   slice_max(order_by = mean_abund, n = 5)
+
+#slice is used to cut it
 
 # "Ammodytes dubius" = northern Sand Lance
 # "Melanogrammus aeglefinus" = Haddock
@@ -443,13 +459,26 @@ B)  Use the `fishnet` function to generate a hexagonal grid called `grid_proj`. 
 C)  Using `ggplot`, plot this grid together with the `coastline` shapefile, fill grid cells by `grid_id`.
 
 ```{r}
+#to check st_crs()
 
 # A)
+trawls_proj <- st_transform(trawls, "EPSG:2954")
 
 
 # B)
+grid_proj <- fishnet(trawls_proj, 
+                     square = F, 
+                     cellsize= c(20000, 20000)) %>% 
+  st_as_sf() %>% 
+  mutate(grid_id=row_number())
+#or can use 2e4
 
+#C)
 
+ggplot()+
+  geom_sf(data=grid_proj, aes(fill= grid_id))+
+  geom_sf(data = coastline_proj, fill="black")+
+  theme_minimal(12)
 ```
 
 #### Briefly: spatial interpolation
@@ -468,6 +497,7 @@ sst_NW_agg <- aggregate(sst_NW, fact = 5)
 
 # * Note what the "fact" arguement can take...
 sst_fine <- disagg(sst_NW_agg, fact = 20, method = "bilinear") 
+#deaggregate this 20x bilinearly 
 
 plot(sst_NW_agg)
 plot(sst_fine)
@@ -492,6 +522,8 @@ r <- rast(ext(v), resolution = c(0.5, 0.5))
 
 # grid points to interpolate across
 grid <- as.points(r)
+
+plot(grid)
 
 # convert grid to sf object
 grid_sf <- st_as_sf(grid)
@@ -556,12 +588,16 @@ When we create new spatial data or modify some batch of data, it is useful to st
 ```{r}
 # Ensure to use the terra function! Overwrite will prevent duplication.
 terra::writeRaster(sst_NW, paste0("../Data/", names(sst_NW), "_SS", ".tif"), overwrite = TRUE)
+#will be needing to do this on midterm
+#paste0("../Data/", names(sst_NW), "_SS", ".tif")
+
 
 # Producing file set for shapefile (check the folder)
 st_write(coastline, "../Data/coastline.shp")
 
 # Checking the available file formats to st_write
 view(st_drivers())
+#also important
 
 
 # Check that these worked:

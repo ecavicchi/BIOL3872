@@ -16,7 +16,23 @@ editor_options:
 Assignments will largely be evaluated based on your code chunk answers. If they are incomplete or formatted incorrectly (e.g., code chunks don't run), no marks will be awarded. I recommend experimenting with solving these answers in a separate script/markdown document and reporting your answers with minimal script.
 
 ```{r}
-# LOAD NECCESSARY PACKAGES HERE (as you go through questions)
+
+packages <- c("tidyverse", "sf", "terra", "rnaturalearth", "sdmpredictors" , "oce", "gstat", "tidyterra")
+
+
+# Install packages not yet installed
+installed_packages <- packages %in% installed.packages()
+
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+
+invisible(lapply(packages, library, character.only = TRUE))
+
+installed_packages
+
 ```
 
 ::: {style="background-color: #44AA99; padding: padding: 5px; border-radius: 2px;"}
@@ -225,7 +241,7 @@ marine_stack_NW_fine_proj <- marine_stack_NW_fine_proj %>%
 marine_stack_NW_fine_proj
 
 # B)
-writeRaster(marine_stack_NW_fine_proj, paste0("../Data/", names(marine_stack_NW_fine_proj), "_shelf", ".tif"), overwrite = TRUE)
+terra::writeRaster(marine_stack_NW_fine_proj, paste0("../Data/", names(marine_stack_NW_fine_proj), "_shelf", ".tif"), overwrite = TRUE)
 
 ```
 :::

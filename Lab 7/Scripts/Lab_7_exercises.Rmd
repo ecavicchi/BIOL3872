@@ -348,6 +348,8 @@ trawls_sf <- st_as_sf(trawls,
 
 trawls_sf$geometry
 
+?crs()
+?st_crs()
 ```
 
 ## Task 2:

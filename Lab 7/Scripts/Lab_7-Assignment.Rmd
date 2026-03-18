@@ -222,7 +222,6 @@ for (i in 1:nlyr(rast_stack_hake)) {
        main = names(rast_stack_hake)[i])
 }
 
-
 ```
 :::
 

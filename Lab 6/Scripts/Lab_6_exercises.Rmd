@@ -8,7 +8,7 @@ output:
     df_print: paged
   css: styles.css
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -119,12 +119,15 @@ as.Date("13-02-2012", format = "%d-%m-%Y")
 as.Date("13/02/2012", format = "%d-%m-%Y")
 
 # Can other formats be read unambiguously?
-as.Date("13-02/2012", format = "%d-%m/%Y")\
+as.Date("13-02/2012", format = "%d-%m/%Y")
 #keep consistent and then it will be reported correct
 
+?strptime()
 
 # This can cause problems if you have inconsistent date formats in your data
-as.Date(c("13-02-2012", "13/02/2012"), format = "%d-%m-%Y")
+as.Date("13-02-2012", format = "%d-%m-%Y")
+
+?as.Date
 
 # Also, be careful of misreads
 as.Date("13-02-2012")
@@ -178,7 +181,12 @@ ex_tz <- as.POSIXct("December-19-10 09:30:49", format = "%B-%d-%y %H:%M:%S", tz 
 
 tz(ex_tz)
 
+?with_tz
+
 with_tz(ex_tz,"Japan")
+
+
+OlsonNames()
 ```
 
 The `lubridate` package is an excellent companion to work with data frames and in turn, with `ggplot2`.

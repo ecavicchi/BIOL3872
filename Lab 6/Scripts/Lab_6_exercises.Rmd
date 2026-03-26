@@ -251,7 +251,7 @@ flights_calendar %>%
 This data is a snippet from the weekly time series taken here in the Bedford Basin. It has been running since 1992 collecting oceanographic measurements and water samples to record plankton communities. In 2014, these methods started including targeted sequencing (metabarcoding) to more accurately capture diversity. This data is part of several published works, e.g., ^1^.
 
 ```{r}
-Bedford_ts <- read.csv("../Data/BedfordBasin_ts.csv"); Bedford_ts = Bedford_ts[,-1] # Remove row name duplicate column
+Bedford_ts <- read.csv("~/Desktop/BIOL3872/Lab 6/Data/BedfordBasin_ts.csv"); Bedford_ts = Bedford_ts[,-1] # Remove row name duplicate column
 ```
 
 ## Task 2:

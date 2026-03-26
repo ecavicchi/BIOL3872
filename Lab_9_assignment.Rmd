@@ -1,0 +1,189 @@
+---
+title: "Lab_9_assignment:Rmarkdown scientific report"
+author: "Ella Cavicchi"
+date: "2026-03-26"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# YOUR TO DO LIST :
+
+### How you present and organize your markdown is flexible, get creative with it! This is what you should include:
+
+-   Create your own markdown file as a report with the appropriate YAML header for an HMTL including your name, and the date
+
+-   Load packages, spatial polygons, and shark data (you can use the code from this document -lab 9- for this )
+
+-   Choose a shark and filter the data for it (rename your shark if you like)
+
+-   Complete the spatiotemporal plot of your sharks migration based on the pseudo code provided
+
+-   Deduce and summarize aspects of its journey :
+
+    -   Its start and end locations
+    -   The latitudinal change (difference between max and min latitude)
+    -   The total distance your shark traveled in km
+
+-   Include the following markdown elements somewhere in your report :
+
+    -   Headings
+    -   Bold text
+    -   Italicized text
+    -   An embedded figure of a basking shark (find online)
+    -   A table
+
+-   **Knit your document and submit as an HMTL on brightspace**
+
+\#**Load Packages**
+
+```{r load-packages}
+packages <- c("tidyverse", "sf", "rnaturalearth", "rnaturalearthdata")
+
+# Install packages not yet installed
+installed_packages <- packages %in% installed.packages()
+
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+## Define coasts and ocean
+
+```{r load-spatial-data}
+# Country polygons for the Americas
+coast <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Ocean polygon
+ocean <- ne_download(scale = "medium", 
+                     type = "ocean", 
+                     category = "physical",
+                     returnclass = "sf")
+```
+
+# **Load Data**
+
+```{r load-shark-data}
+# Download shark tracking data directly, ERDDAP servers often go down for maintenance, looks like that's currently the case 
+#sharks <- read.csv("https://erddap.bco-dmo.org/erddap/tabledap/bcodmo_dataset_476315.csv", 
+                   #skip = 1)  # Skip the units row
+
+#We'll load the csv directly to be safe
+sharks <- read.csv("~/Desktop/BIOL3872/Lab 9/Data/basking_sharks.csv")
+sharks <- sharks[-1,]
+
+# Clean column names
+colnames(sharks) <- c("ptt", "tuid", "year", "month", "day", "longitude", "latitude", 
+                      "date", "type", "depth_min", "temp_depth_min", "depth_max", 
+                      "depth_range", "tsst")
+
+# Convert date column and add month name
+sharks <- sharks %>%
+  mutate(
+    across(c(ptt, tuid, year, month, day, longitude, latitude, 
+             depth_min, temp_depth_min, depth_max, depth_range, tsst), as.numeric),
+    date = as.Date(date, format = "%m/%d/%Y"),
+    month_name = month.abb[month]
+  )
+
+
+# Convert to spatial object
+sharks_sf <- st_as_sf(sharks, 
+                      coords = c("longitude", "latitude"),
+                      crs = 4326)
+```
+
+## Filter Data for Shark
+
+```{r your-shark, eval=FALSE}
+
+my_shark <- 52562
+
+# Filter data
+my_data <- sharks %>%
+  filter(ptt == my_shark) %>%
+  arrange(date)
+
+my_sf <- sharks_sf %>%
+  filter(ptt == my_shark) %>%
+  arrange(date)
+
+my_data
+
+```
+
+### Filter Data for start and end points
+
+```{r}
+first_point <- my_data[which.min(my_data$date),]
+last_point <- my_data[which.max(my_data$date),]
+```
+
+### Create Bounding Box
+
+```{r}
+bbox <- st_bbox(my_sf)
+xlim <- c(bbox["xmin"] - 3, bbox["xmax"] + 3)
+ylim <- c(bbox["ymin"] - 3, bbox["ymax"] + 3)
+```
+
+## **Create Plot**
+
+```{r, eval=FALSE}
+# Edit the settings of this chunk to render appropriately, what do you need to add to {r}?
+
+# Build the map layer by layer
+my_data %>% mutate(month_name = factor(month_name, levels = month.abb))%>%
+  ggplot() +
+  # Layer 1: Ocean background
+  geom_sf(data = ocean, fill=NA) +
+  
+  # Layer 2: Land polygons
+  geom_sf(data=coast, fill="gray60")+ 
+  
+  # Layer 3: Track line connecting points
+  geom_path(aes(x=longitude, y=latitude))+
+  
+  # Layer 4: Points colored by month
+  geom_point(aes(x=longitude, y=latitude, color=month_name)) +
+  
+  # Layer 5: Start point (green triangle)
+  geom_point(data=first_point, aes(x=longitude, y=latitude), shape=17, size=4.5, color= "green", alpha=0.5)+
+  
+  # Layer 6: End point (red square)
+  geom_point(data=last_point, aes(x=longitude, y=latitude), shape=15, size=4.5, color="red", alpha=0.5) +
+  
+  # Set map extent
+  coord_sf(xlim = xlim, ylim = ylim, expand = FALSE) +
+  scale_color_manual(
+  name = "Month",
+  values = c("Jan" = "#313695", "Feb" = "#4575b4", "Mar" = "#74add1",
+             "Apr" = "#abd9e9", "May" = "#e0f3f8", "Jun" = "#fee090",
+             "Jul" = "#fdae61", "Aug" = "#f46d43", "Sep" = "#d73027",
+             "Oct" = "#a50026", "Nov" = "#762a83", "Dec" = "#40004b")
+  )+
+  labs(
+    title = paste("Migration of Basking Shark", 52562),
+    x = "Longitude", y = "Latitude"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    legend.position = "right"
+  )
+```
+
+```{r session-info}
+sessionInfo()
+```

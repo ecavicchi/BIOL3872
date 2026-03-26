@@ -109,6 +109,8 @@ You can name chunks and set options for how the chunk will render when knit:
 -   `fig.width =` — sets figure width in inches (can also set `fig.height =...` ) - defaults are width=7 and height=5
 
 ```{r echo-false-example, echo=FALSE}
+#echo-false-example is the name and everything after is the argument
+#echo hig all the actual code and only shows output
 
 shark_weight_kg <- 2000
 shark_weight_kg * 2.2  # Convert to pounds
@@ -161,6 +163,22 @@ Move to source view and practice by writing the following in the space below.
 4.  A simple 2-column table
 
 *Add your practice content here:*
+
+### Ella Cavicchi
+
+***the quick brown fox jumps over the lazy dog***
+
+```         
+-   Orca 
+-   Humpback Whale
+-   Greenland Shark
+```
+
+```         
+| Column 1 | Column 2 |
+|----------|----------|
+| Data 1   | Data 2   |
+```
 
 ------------------------------------------------------------------------
 
@@ -249,6 +267,7 @@ shark_summary <- sharks %>%
 #kable turns a dataframe into a nicely formatted table, much better than the raw output of shark_summary
 knitr::kable(shark_summary, 
              digits = 1)
+#digits= one is rounding to one decimal
 ```
 
 ------------------------------------------------------------------------
@@ -267,7 +286,7 @@ Let's work through an analysis on the path of shark **52556** — this individua
 ## 3.1 Filter to one shark
 
 ```{r demo-filter}
-demo_shark <- 52556
+demo_shark <-52556	
 
 demo_data <- sharks %>%
   filter(ptt == demo_shark) %>%

@@ -55,6 +55,7 @@ Let's recreate it. This loads the requisite data. This loads the requisite data.
 data("Minard.troops")
 data("Minard.cities")
 data("Minard.temp")
+
 ```
 
 Let's plot the troops path, there and back again.

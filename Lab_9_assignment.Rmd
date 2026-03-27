@@ -170,8 +170,8 @@ my_data %>% mutate(month_name = factor(month_name, levels = month.abb))%>%
   name = "Month",
   values = c("Jan" = "#313695", "Feb" = "#4575b4", "Mar" = "#74add1",
              "Apr" = "#abd9e9", "May" = "#e0f3f8", "Jun" = "#fee090",
-             "Jul" = "#fdae61", "Aug" = "#f46d43", "Sep" = "#d73027",
-             "Oct" = "#a50026", "Nov" = "#762a83", "Dec" = "#40004b")
+             "Jul" = "#fdae61", "Aug" = "#e7400d", "Sep" = "#d73027",
+             "Oct" = "#f46d43", "Nov" = "#a50026", "Dec" = "#922f80")
   )+
   labs(
     title = paste("Migration of Basking Shark", 52562),

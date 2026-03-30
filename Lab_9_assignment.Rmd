@@ -19,14 +19,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### How you present and organize your markdown is flexible, get creative with it! This is what you should include:
 
--   Create your own markdown file as a report with the appropriate YAML header for an HMTL including your name, and the date
-
--   Load packages, spatial polygons, and shark data (you can use the code from this document -lab 9- for this )
-
--   Choose a shark and filter the data for it (rename your shark if you like)
-
--   Complete the spatiotemporal plot of your sharks migration based on the pseudo code provided
-
 -   Deduce and summarize aspects of its journey :
 
     -   Its start and end locations
@@ -43,9 +35,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   **Knit your document and submit as an HMTL on brightspace**
 
-\#**Load Packages**
+# **Load and Filter**
 
-```{r load-packages}
+```{r load-packages, include=FALSE}
 packages <- c("tidyverse", "sf", "rnaturalearth", "rnaturalearthdata")
 
 # Install packages not yet installed
@@ -59,9 +51,9 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-## Define coasts and ocean
+## Define Coasts and Ocean
 
-```{r load-spatial-data}
+```{r load-spatial-data, echo=FALSE}
 # Country polygons for the Americas
 coast <- ne_countries(scale = "medium", returnclass = "sf")
 
@@ -72,14 +64,14 @@ ocean <- ne_download(scale = "medium",
                      returnclass = "sf")
 ```
 
-# **Load Data**
+## Load Data
 
 ```{r load-shark-data}
 # Download shark tracking data directly, ERDDAP servers often go down for maintenance, looks like that's currently the case 
 #sharks <- read.csv("https://erddap.bco-dmo.org/erddap/tabledap/bcodmo_dataset_476315.csv", 
-                   #skip = 1)  # Skip the units row
+                   #skip = 1) 
 
-#We'll load the csv directly to be safe
+#We'll use the csv
 sharks <- read.csv("~/Desktop/BIOL3872/Lab 9/Data/basking_sharks.csv")
 sharks <- sharks[-1,]
 
@@ -104,9 +96,9 @@ sharks_sf <- st_as_sf(sharks,
                       crs = 4326)
 ```
 
-## Filter Data for Shark
+## Filter Data for Shark of Interest
 
-```{r your-shark, eval=FALSE}
+```{r your-shark}
 
 my_shark <- 52562
 
@@ -118,29 +110,18 @@ my_data <- sharks %>%
 my_sf <- sharks_sf %>%
   filter(ptt == my_shark) %>%
   arrange(date)
-
-my_data
-
 ```
 
-### Filter Data for start and end points
-
-```{r}
-first_point <- my_data[which.min(my_data$date),]
-last_point <- my_data[which.max(my_data$date),]
-```
-
-### Create Bounding Box
-
-```{r}
+## Spatial Polygons
+```{r bbox}
 bbox <- st_bbox(my_sf)
 xlim <- c(bbox["xmin"] - 3, bbox["xmax"] + 3)
 ylim <- c(bbox["ymin"] - 3, bbox["ymax"] + 3)
 ```
 
-## **Create Plot**
+# **Path of Shark 52562**
 
-```{r, eval=FALSE}
+```{r create plot, echo=FALSE, fig.width=7, fig.height=9}
 # Edit the settings of this chunk to render appropriately, what do you need to add to {r}?
 
 # Build the map layer by layer
@@ -159,18 +140,18 @@ my_data %>% mutate(month_name = factor(month_name, levels = month.abb))%>%
   geom_point(aes(x=longitude, y=latitude, color=month_name)) +
   
   # Layer 5: Start point (green triangle)
-  geom_point(data=first_point, aes(x=longitude, y=latitude), shape=17, size=4.5, color= "green", alpha=0.5)+
+  geom_point(data=my_data[which.min(my_data$date),], aes(x=longitude, y=latitude), shape=17, size=4.5, color= "green", alpha=0.75)+
   
   # Layer 6: End point (red square)
-  geom_point(data=last_point, aes(x=longitude, y=latitude), shape=15, size=4.5, color="red", alpha=0.5) +
+  geom_point(data=my_data[which.max(my_data$date),], aes(x=longitude, y=latitude), shape=15, size=4.5, color="red", alpha=0.75) +
   
   # Set map extent
   coord_sf(xlim = xlim, ylim = ylim, expand = FALSE) +
   scale_color_manual(
   name = "Month",
   values = c("Jan" = "#313695", "Feb" = "#4575b4", "Mar" = "#74add1",
-             "Apr" = "#abd9e9", "May" = "#e0f3f8", "Jun" = "#fee090",
-             "Jul" = "#fdae61", "Aug" = "#e7400d", "Sep" = "#d73027",
+             "Apr" = "#abd9e9", "May" = "#fee090", "Jun" = "#fdae61",
+             "Jul" = "#fd8c1c", "Aug" = "#e7400d", "Sep" = "#d73027",
              "Oct" = "#f46d43", "Nov" = "#a50026", "Dec" = "#922f80")
   )+
   labs(

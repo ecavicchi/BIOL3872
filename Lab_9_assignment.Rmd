@@ -28,10 +28,8 @@ knitr::opts_chunk$set(echo = TRUE)
 -   Include the following markdown elements somewhere in your report :
 
     -   Headings
-    -   Bold text
     -   Italicized text
     -   An embedded figure of a basking shark (find online)
-    -   A table
 
 -   **Knit your document and submit as an HMTL on brightspace**
 
@@ -113,6 +111,7 @@ my_sf <- sharks_sf %>%
 ```
 
 ## Spatial Polygons
+
 ```{r bbox}
 bbox <- st_bbox(my_sf)
 xlim <- c(bbox["xmin"] - 3, bbox["xmax"] + 3)
@@ -164,6 +163,31 @@ my_data %>% mutate(month_name = factor(month_name, levels = month.abb))%>%
     legend.position = "right"
   )
 ```
+
+```{r values for table, include=FALSE}
+start <- my_data[which.min(my_data$date),]
+end <- my_data[which.max(my_data$date),]
+
+lat_diff <- end$latitude-start$latitude
+long_diff <- end$longitude-start$longitude
+
+```
+
+## *Coordinate Change of Shark 52562*
+|Location   |Latitude |Longitude |
+|-----------|---------|----------|
+|Start      |42.019   |-70.2651  |
+|End        |-2.15    |-41.77    |
+|Difference |-44.169  |28.4951   |
+
+## *Distance of Travel from Start-End*
+```{r total distance, echo=FALSE}
+
+total_dist <- units::set_units(st_distance(my_sf$geometry[40], my_sf$geometry[1]), km)
+total_dist
+
+```
+
 
 ```{r session-info}
 sessionInfo()

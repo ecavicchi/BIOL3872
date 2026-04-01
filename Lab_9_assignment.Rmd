@@ -1,12 +1,12 @@
 ---
-title: "Lab_9_assignment:Rmarkdown scientific report"
+title: "Lab_9_assignment: Rmarkdown scientific report"
 author: "Ella Cavicchi"
 date: "2026-03-26"
 output: 
   html_document:
     toc: true
     toc_float: true
-    theme: flatly
+    theme: spacelab
 editor_options: 
   chunk_output_type: console
 ---
@@ -15,23 +15,11 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# YOUR TO DO LIST :
+# **BASKING SHARK** (*Cetorhinus maximus*)
 
-### How you present and organize your markdown is flexible, get creative with it! This is what you should include:
-
--   Deduce and summarize aspects of its journey :
-
-    -   Its start and end locations
-    -   The latitudinal change (difference between max and min latitude)
-    -   The total distance your shark traveled in km
-
--   Include the following markdown elements somewhere in your report :
-
-    -   Headings
-    -   Italicized text
-    -   An embedded figure of a basking shark (find online)
-
--   **Knit your document and submit as an HMTL on brightspace**
+```{r fig.align="center", echo=FALSE, include=TRUE, out.width="60%"}
+knitr::include_graphics(("~/Desktop/BIOL3872/Lab 9/Figures/baskingshark.jpg"))
+```
 
 # **Load and Filter**
 
@@ -49,7 +37,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-## Define Coasts and Ocean
+## Define Coasts and Ocean 
 
 ```{r load-spatial-data, echo=FALSE}
 # Country polygons for the Americas
@@ -174,20 +162,21 @@ long_diff <- end$longitude-start$longitude
 ```
 
 ## *Coordinate Change of Shark 52562*
-|Location   |Latitude |Longitude |
-|-----------|---------|----------|
-|Start      |42.019   |-70.2651  |
-|End        |-2.15    |-41.77    |
-|Difference |-44.169  |28.4951   |
+
+| Location   | Latitude | Longitude |
+|------------|----------|-----------|
+| Start      | 42.019   | -70.2651  |
+| End        | -2.15    | -41.77    |
+| Difference | -44.169  | 28.4951   |
 
 ## *Distance of Travel from Start-End*
+
 ```{r total distance, echo=FALSE}
 
 total_dist <- units::set_units(st_distance(my_sf$geometry[40], my_sf$geometry[1]), km)
 total_dist
 
 ```
-
 
 ```{r session-info}
 sessionInfo()
